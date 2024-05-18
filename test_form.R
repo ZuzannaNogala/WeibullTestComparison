@@ -44,11 +44,11 @@ Est_kaplan_meier <- function(t, n, sort_vec_dt){
   if(Vec[1] >= t) return(0)
   if(Vec[n] < t) return(1)
   else{
-      k <- which.max(Vec >= t)
-      k_before <- k - 1
-      expr1 <- prod(((n - 1:k_before) / (n + 1 - 1:k_before)) ^ delta_Vec[1:k_before])
-      return(1 - expr1)
-   }
+    k <- which.max(Vec >= t)
+    k_before <- k - 1
+    expr1 <- prod(((n - 1:k_before) / (n + 1 - 1:k_before)) ^ delta_Vec[1:k_before])
+    return(1 - expr1)
+  }
 }
 
 # sapply(sort(theta_hat_est * ((log(X) - log(lambda_hat_est)))),
@@ -93,14 +93,12 @@ S_n_1 <- function(a, n, Y_dt){
     S_1 <- exp((- (Y_j - Y_val) ^ 2) / (4 * a))
     S_2 <- - ((Y_j - Y_val) ^ 2 - 2 * a) / (4 * a ^ 2)
     S_3 <- 2 * (1 - exp(Y_j)) * (Y_j - Y_val) / (2 * a) + (1 - exp(Y_j)) * (1 - exp(Y_val))
-
+    
     sum(Delta * (S_1 * (S_2 + S_3)))
   })
-
+  
   n * sqrt(pi / a) * sum(Delta * S_j)
 }
-
-S_n_2(a = 5, n = 100, data.table("Y_val" = rweibull(100, 1.5, 1), "delta" = 1))
 
 S_n_2 <- function(a, n, Y_dt){
   Delta <- sapply(1:n, function(k) Delta_k(k, n, sort_Y_vals(Y_dt)))
@@ -148,16 +146,9 @@ CM_test <- function(T_vec_dt, X_vec, theta_hat, lambda_hat, n){
     expr2 <- sapply(2:(d+1), function(i) X_t[i] + X_t[i - 1])
     S <- sum(Est_KM_X_t[1:d] * expr1 * (Est_KM_X_t[1:d] - expr2))
   }
-
+  
   n / 3 + n * S
 }
-
-# Cens_statistics_compute_list[["50"]][["10%"]]
-# T_vec <- sapply(1:50, function(i) min(Cens_statistics_compute_list[["50"]][["10%"]]$X[i], Cens_statistics_compute_list[["50"]][["10%"]]$C[i]))
-# delta <- T_vec == Cens_statistics_compute_list[["50"]][["10%"]]$X
-# T_vec_dt <- data.table("T_val" = T_vec, "delta" = delta)
-# X_vec <- Cens_statistics_compute_list[["50"]][["10%"]]$X
-
 
 LS_test <- function(Y_vec_dt, n){
   Y_values <- Y_vec_dt[, Y_val]

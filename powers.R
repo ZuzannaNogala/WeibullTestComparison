@@ -37,14 +37,14 @@ sampling_cenusured <- function(X, perc_censored = 0.1, rowNameQDF = "Censured_10
   
   Y_v_dt <- transform_to_Y(T_v_dt, theta_hat, lambda_hat)
   
-  c(S_n_1(a = 1, n, Y_v_dt), S_n_1(a = 2, n, Y_v_dt), S_n_1(a = 5, n, Y_v_dt),
-    S_n_2(a = 1, n, Y_v_dt), S_n_2(a = 2, n, Y_v_dt), S_n_2(a = 5, n, Y_v_dt), 
+  c(S_n_1(a = 0.75, n, Y_v_dt), S_n_1(a = 1, n, Y_v_dt), S_n_1(a = 2, n, Y_v_dt),
+    S_n_2(a = 0.75, n, Y_v_dt), S_n_2(a = 1, n, Y_v_dt), S_n_2(a = 2, n, Y_v_dt), 
     KS_test(Y_v_dt, n),CM_test(T_v_dt, X, theta_hat, lambda_hat, n),
     LS_test(Y_v_dt, n)) > quantiles
 }
 
 sampling_uncensured(rweibull(50, 5, 2), "Uncensured_100")
-sampling_cenusred(rgamma(50, 4, 1))
+sampling_cenusured(rgamma(50, 4, 1))
 
 
 
@@ -52,33 +52,49 @@ sampling_cenusred(rgamma(50, 4, 1))
 sapply(rownames(Quantiles_DF), function(i) sampling_uncensured(W_1, i))
 lapply(rownames(Quantiles_DF)[3:4], function(i) sapply(c(0.1, 0.2), function(perc) sampling_cenusured(W_1, perc_censored = perc, i))) 
 
-m <- 20
+m <- 800
 
 n_cores <- detectCores()
 cluster <- makeCluster(n_cores - 1)
 registerDoParallel(cluster)
 
-X_vals <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
+Sample_vals <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
+  # H0
   W_1 <- rweibull(50, 0.5, 1)
   W_2 <- rweibull(50, 1, 1)
   W_3 <- rweibull(50, 1.5, 1)
   
+  # H1, IHR
   G_1 <- rgamma(50, 2, 1)
   G_2 <- rgamma(50, 3, 1)
-  AW_1 <- RelDists::rAddW(50, 10, 1 / 0.02, 1, 5.2)
+  AW_1 <- RelDists::rAddW(50, mu = 10, sigma = 1 / 0.02, nu = 1, tau = 5.2)
+  while(0 %in% AW_1){
+    AW_1 <- RelDists::rAddW(50, mu = 10, sigma = 1 / 0.02, nu = 1, tau = 5.2)
+  }
   
+  # H1, UBT
   LN_1 <- rlnorm(50, 0, 0.8)
   IG_1 <- invgamma::rinvgamma(50, 3, 1)
-  IS_1 <- rmutil::rinvgauss(50, 1, 0.25)
+  #IG_2 <- invgamma::rinvgamma(50, 5, 2)
+  EW_1 <- RelDists::rEW(50, nu = 4, mu = 1/ 12, sigma = 0.6)
   
+  
+  # H1, DHR
   G_3 <- rgamma(50, 0.2, 1)
-  H_1 <- rmutil::rhjorth(50, 1, 0, 1)
-  EW_1 <- RelDists::dEW(50, 1/ 0.01, 0.95, 0.1)
+  H_1 <- rmutil::rhjorth(50, s = 0, m = 1, f = 1) #f theta, s beta m delta
+  AW_2 <- RelDists::rAddW(50, mu = 2, sigma = 1 / 20, nu = 1, tau = 0.1)
+  while(0 %in% AW_2){
+    AW_2 <- RelDists::rAddW(50, mu = 2, sigma = 1 / 20, nu = 1, tau = 0.1)
+  }
   
-  GG_1 <- ggamma::rggamma()
+  # H1, BT
+  GG_1 <- ggamma::rggamma(50, k = 0.1, a = 1, b = 4)
+  GG_2 <- ggamma::rggamma(50, k = 0.2, a = 1, b = 3)
+  #EW_2 <- RelDists::rEW(50, nu = 0.1, mu = 1/ 100, sigma = 5)
+  B_2 <- rbeta(50, shape1 = 0.1, shape2 = 3)
   
   
-  data.frame("W_1" = sampling_uncensured(W_1),
+  data.frame("W_1" = sampling_uncensured(W_1), # H0 ok
              "W_2" = sampling_uncensured(W_2),
              "W_3" = sampling_uncensured(W_3),
              "W_1_10perc" = sampling_cenusured(W_1, perc_censored = 0.1, "Censured_10perc_50"),
@@ -87,17 +103,62 @@ X_vals <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
              "W_1_20perc" = sampling_cenusured(W_1, perc_censored = 0.2, "Censured_20perc_50"),
              "W_2_20perc" = sampling_cenusured(W_2, perc_censored = 0.2, "Censured_20perc_50"),
              "W_3_20perc" = sampling_cenusured(W_3, perc_censored = 0.2, "Censured_20perc_50"),
-             )
+             "IHR_G_1" = sampling_uncensured(G_1), # H1 ok, IHR
+             "IHR_G_2" = sampling_uncensured(G_2),
+             "IHR_AW_1" = sampling_uncensured(AW_1),
+             "IHR_G_1_10perc" = sampling_cenusured(G_1, perc_censored = 0.1, "Censured_10perc_50"),
+             "IHR_G_2_10perc" = sampling_cenusured(G_2, perc_censored = 0.1, "Censured_10perc_50"),
+             "IHR_AW_1_10perc" = sampling_cenusured(AW_1, perc_censored = 0.1, "Censured_10perc_50"),
+             "IHR_G_1_20perc" = sampling_cenusured(G_1, perc_censored = 0.2, "Censured_20perc_50"),
+             "IHR_G_2_20perc" = sampling_cenusured(G_2, perc_censored = 0.2, "Censured_20perc_50"),
+             "IHR_AW_1_20perc" = sampling_cenusured(AW_1, perc_censored = 0.2, "Censured_20perc_50"),
+             "UBT_LN_1" = sampling_uncensured(LN_1), # H1 ok, UBT
+             "UBT_IG_1" = sampling_uncensured(IG_1),
+             "UBT_EW_1" = sampling_uncensured(EW_1),
+             "UBT_LN_1_10perc" = sampling_cenusured(LN_1, perc_censored = 0.1, "Censured_10perc_50"),
+             "UBT_IG_1_10perc" = sampling_cenusured(IG_1, perc_censored = 0.1, "Censured_10perc_50"),
+             "UBT_EW_1_10perc" = sampling_cenusured(EW_1, perc_censored = 0.1, "Censured_10perc_50"),
+             "UBT_LN_1_20perc" = sampling_cenusured(LN_1, perc_censored = 0.2, "Censured_20perc_50"),
+             "UBT_IG_1_20perc" = sampling_cenusured(IG_1, perc_censored = 0.2, "Censured_20perc_50"),
+             "UBT_EW_1_20perc" = sampling_cenusured(EW_1, perc_censored = 0.2, "Censured_20perc_50"),
+             "DHR_G_3" = sampling_uncensured(G_3), # H1 ok, DHR
+             "DHR_H_2" = sampling_uncensured(H_1),
+             "DHR_AW_2" = sampling_uncensured(AW_2),
+             "DHR_G_3_10perc" = sampling_cenusured(G_3, perc_censored = 0.1, "Censured_10perc_50"),
+             "DHR_H_2_10perc" = sampling_cenusured(H_1, perc_censored = 0.1, "Censured_10perc_50"),
+             "DHR_AW_2_10perc" = sampling_cenusured(AW_2, perc_censored = 0.1, "Censured_10perc_50"),
+             "DHR_G_3_20perc" = sampling_cenusured(G_3, perc_censored = 0.2, "Censured_20perc_50"),
+             "DHR_H_2_20perc" = sampling_cenusured(H_1, perc_censored = 0.2, "Censured_20perc_50"),
+             "DHR_AW_2_20perc" = sampling_cenusured(AW_2, perc_censored = 0.2, "Censured_20perc_50"),
+             "BT_GG_1" = sampling_uncensured(GG_1), # H1 ok, BT
+             "BT_GG_2" = sampling_uncensured(GG_2),
+             "BT_B_2" = sampling_uncensured(B_2),
+             "BT_GG_1_10perc" = sampling_cenusured(GG_1, perc_censored = 0.1, "Censured_10perc_50"),
+             "BT_GG_2_10perc" = sampling_cenusured(GG_2, perc_censored = 0.1, "Censured_10perc_50"),
+             "BT_B_2_10perc" = sampling_cenusured(B_2, perc_censored = 0.1, "Censured_10perc_50"),
+             "BT_GG_1_20perc" = sampling_cenusured(GG_1, perc_censored = 0.2, "Censured_20perc_50"),
+             "BT_GG_2_20perc" = sampling_cenusured(GG_2, perc_censored = 0.2, "Censured_20perc_50"),
+             "BT_B_2_20perc" = sampling_cenusured(B_2, perc_censored = 0.2, "Censured_20perc_50"))
 }
 stopImplicitCluster()
 
-X <- sapply(1:20, function(i) rweibull(50, 0.5, 1))
-apply(X, MARGIN = 2, sampling_cenusured)
+save(Sample_vals, file = "/Users/maniek/Desktop/licencjat_R/Sample_vals.rda")
 
-X <- sapply(1:100, function(i) rweibull(50, 1, 1))
-X <- sapply(1:100, function(i) rweibull(50, 1.5, 1))
+load("/Users/maniek/Desktop/licencjat_R/Sample_vals.rda")
+load("/Users/maniek/Desktop/licencjat_R/list_of.rda")
+colNames_vec <- colnames(Sample_vals[[1]])
+length(list_of_test_vals)
+computePower <- function(distName, StatTestName){
+  list_of_col_value <- lapply(Sample_vals, function(df) df[distName])
+  list_of_statistic_value <- unlist(lapply(list_of_col_value, function(df) df[StatTestName, ]))
+  
+  power <- mean(list_of_statistic_value)
+  power
+}
 
 
-hist(rmutil::rinvgauss(1000, 1, 0.25), xlim = c(0, 5), breaks = 100)
+Power_df <- sapply(colNames_vec,
+                   function(colName) lapply(colnames(Quantiles_DF), 
+                                            function(rowName) computePower(distName = colName, StatTestName = rowName)))
 
-?RelDists::dEW()
+rownames(Power_df) <- colnames(Quantiles_DF)

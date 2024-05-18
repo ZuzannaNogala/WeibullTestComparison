@@ -96,7 +96,7 @@ Newton_result <- function(T_dt, theta_0, lambda_0){
 thetha_hat_approx <- function(n, T_vals){
   function(x) n / x + sum(log(T_vals)) - (n / sum(T_vals ^ x)) * sum(log(T_vals) * (T_vals) ^ x)
 }
-mle_theta_full_sample <- function(n, T_vals) pracma::bisect(thetha_hat_approx(n, T_vals), 0, 100)$root
+mle_theta_full_sample <- function(n, T_vals) pracma::bisect(thetha_hat_approx(n, T_vals), 0, 10)$root
 
 mle_lambda_full_sample <- function(n, T_vals, theta_hat_est) (1 / n * (sum(T_vals ^ theta_hat_est))) ^ (1 / theta_hat_est)
 
