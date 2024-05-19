@@ -146,6 +146,9 @@ save(Sample_vals, file = "/Users/maniek/Desktop/licencjat_R/Sample_vals.rda")
 
 load("/Users/maniek/Desktop/licencjat_R/Sample_vals.rda")
 load("/Users/maniek/Desktop/licencjat_R/list_of.rda")
+
+load("/Users/zuza/Desktop/studia/licencjat/SimulationData/licencjat_R/Sample_vals.rda")
+
 colNames_vec <- colnames(Sample_vals[[1]])
 length(list_of_test_vals)
 computePower <- function(distName, StatTestName){
@@ -162,3 +165,25 @@ Power_df <- sapply(colNames_vec,
                                             function(rowName) computePower(distName = colName, StatTestName = rowName)))
 
 rownames(Power_df) <- colnames(Quantiles_DF)
+
+Power_df <- t(Power_df)
+
+Power_df[1:3, ] # Weibull, full sample
+
+Power_df[4:9, ] # Weibull, censured 10% and 20%
+
+Power_df[10:12, ] # IHR, full sample
+
+Power_df[13:18, ] # IHR, censured 10% and 20%
+
+Power_df[19:21, ] # UBT, full sample
+
+Power_df[22:27, ] # UBT, censured 10% and 20%
+
+Power_df[28:30, ] # DHR, full sample
+
+Power_df[31:36, ] # DHR, censured 10% and 20%
+
+Power_df[37:39, ] # BT, full sample
+
+Power_df[40:45, ] # BT, censured 10% and 20%

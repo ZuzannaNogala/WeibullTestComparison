@@ -122,7 +122,7 @@ list_of_test_vals <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %d
 stopImplicitCluster()
 
 save(list_of_test_vals, file = "/Users/maniek/Desktop/licencjat_R/list_of_test_vals.rda")
-load( "/Users/maniek/Desktop/licencjat_R/list_of_test_vals.rda")
+load("/Users/zuza/Desktop/studia/licencjat/SimulationData/licencjat_R/list_of_test_vals.rda")
 
 
 getStatisticTestsValue <- function(i, strColName){
