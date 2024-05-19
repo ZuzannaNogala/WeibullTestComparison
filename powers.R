@@ -43,22 +43,13 @@ sampling_cenusured <- function(X, perc_censored = 0.1, rowNameQDF = "Censured_10
     LS_test(Y_v_dt, n)) > quantiles
 }
 
-sampling_uncensured(rweibull(50, 5, 2), "Uncensured_100")
-sampling_cenusured(rgamma(50, 4, 1))
-
-
-
-
-sapply(rownames(Quantiles_DF), function(i) sampling_uncensured(W_1, i))
-lapply(rownames(Quantiles_DF)[3:4], function(i) sapply(c(0.1, 0.2), function(perc) sampling_cenusured(W_1, perc_censored = perc, i))) 
-
 m <- 800
 
 n_cores <- detectCores()
 cluster <- makeCluster(n_cores - 1)
 registerDoParallel(cluster)
 
-Sample_vals <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
+Sample_vals_2 <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
   # H0
   W_1 <- rweibull(50, 0.5, 1)
   W_2 <- rweibull(50, 1, 1)
@@ -142,7 +133,11 @@ Sample_vals <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
 }
 stopImplicitCluster()
 
-save(Sample_vals, file = "/Users/maniek/Desktop/licencjat_R/Sample_vals.rda")
+#Sample_vals <- c(Sample_vals_2, Sample_vals)
+
+save(Sample_vals_2, file = "/Users/zuza/Desktop/studia/licencjat/SimulationData/licencjat_R/Sample_vals_2.rda")
+
+Sample_vals <- c(Sample_vals, Sample_vals_2)
 
 load("/Users/maniek/Desktop/licencjat_R/Sample_vals.rda")
 load("/Users/maniek/Desktop/licencjat_R/list_of.rda")
@@ -150,7 +145,7 @@ load("/Users/maniek/Desktop/licencjat_R/list_of.rda")
 load("/Users/zuza/Desktop/studia/licencjat/SimulationData/licencjat_R/Sample_vals.rda")
 
 colNames_vec <- colnames(Sample_vals[[1]])
-length(list_of_test_vals)
+
 computePower <- function(distName, StatTestName){
   list_of_col_value <- lapply(Sample_vals, function(df) df[distName])
   list_of_statistic_value <- unlist(lapply(list_of_col_value, function(df) df[StatTestName, ]))
