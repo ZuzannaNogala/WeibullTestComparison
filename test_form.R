@@ -118,11 +118,11 @@ S_n_2 <- function(a, n, Y_dt){
 
 
 KS_test <- function(Y_vec_dt, n){
-  Y_values <- Y_vec_dt[, Y_val]
+  #Y_values <- Y_vec_dt[, Y_val]
   sort_Y_vec_dt <- sort_Y_vals(Y_vec_dt)
   sort_Y_values <- sort_Y_vec_dt[, sort_Y_val]
   Est_KM_sort_Y <- sapply(sort_Y_values, function(t) Est_kaplan_meier(t, n, sort_Y_vec_dt))
-  expr1 <- sapply(Y_values, function(y) 1 - exp(-exp(y)))
+  expr1 <- sapply(sort_Y_values, function(y) 1 - exp(-exp(y)))
   
   S1 <- max(Est_KM_sort_Y - expr1)
   S2 <- max(expr1 - Est_KM_sort_Y)
@@ -130,8 +130,8 @@ KS_test <- function(Y_vec_dt, n){
   max(S1, S2)
 }
 
-CM_test <- function(T_vec_dt, X_vec, theta_hat, lambda_hat, n){
-  X_t <- theta_hat * (log(X_vec) - log(lambda_hat))
+CM_test <- function(T_vec_dt, X_vec, theta_hat, lambda_hat, n){ # add sort 
+  X_t <- theta_hat * (log(sort(X_vec)) - log(lambda_hat))
   d <- sum(T_vec_dt[, delta])
   sort_Y_vec_dt <- sort_Y_vals(transform_to_Y(T_vec_dt, theta_hat, lambda_hat))
   Est_KM_X_t <- sapply(X_t, function(t) Est_kaplan_meier(t, n, sort_Y_vec_dt))
@@ -151,9 +151,10 @@ CM_test <- function(T_vec_dt, X_vec, theta_hat, lambda_hat, n){
 }
 
 LS_test <- function(Y_vec_dt, n){
-  Y_values <- Y_vec_dt[, Y_val]
+  #Y_values <- Y_vec_dt[, Y_val]
   sort_Y_vec_dt <- sort_Y_vals(Y_vec_dt)
-  Est_KM_Y <- sapply(Y_values, function(t) Est_kaplan_meier(t, n, sort_Y_vec_dt))
+  sort_Y_values <- sort_Y_vec_dt[, sort_Y_val]
+  Est_KM_Y <- sapply(sort_Y_values, function(t) Est_kaplan_meier(t, n, sort_Y_vec_dt))
   max_S1 <- 1:n / n - Est_KM_Y
   max_S2 <- Est_KM_Y - 0:(n-1) / n
   max_S <- sapply(1:n, function(j) max(max_S1[j], max_S2[j]))

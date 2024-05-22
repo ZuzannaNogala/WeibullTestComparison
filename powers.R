@@ -52,6 +52,10 @@ registerDoParallel(cluster)
 Sample_vals_2 <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
   # H0
   W_1 <- rweibull(50, 0.5, 1)
+  # C <- runif(50, 0, 2)
+  # summary(W_1)
+  # sort(W_1)
+  # sum(pmin(W_1, C) == W_1)
   W_2 <- rweibull(50, 1, 1)
   W_3 <- rweibull(50, 1.5, 1)
   
@@ -137,12 +141,15 @@ stopImplicitCluster()
 
 save(Sample_vals_2, file = "/Users/zuza/Desktop/studia/licencjat/SimulationData/licencjat_R/Sample_vals_2.rda")
 
-Sample_vals <- c(Sample_vals, Sample_vals_2)
+
 
 load("/Users/maniek/Desktop/licencjat_R/Sample_vals.rda")
 load("/Users/maniek/Desktop/licencjat_R/list_of.rda")
 
 load("/Users/zuza/Desktop/studia/licencjat/SimulationData/licencjat_R/Sample_vals.rda")
+load("/Users/zuza/Desktop/studia/licencjat/SimulationData/licencjat_R/Sample_vals_2.rda")
+
+Sample_vals <- c(Sample_vals, Sample_vals_2)
 
 colNames_vec <- colnames(Sample_vals[[1]])
 
