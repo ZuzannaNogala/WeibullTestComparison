@@ -1,5 +1,8 @@
 library(data.table)
 
+# LEAST SQUARE ESTIMATORS TO LS TEST
+library(EWGoF)
+
 transform_to_Y <- function(T_vec_dt, theta_hat, lambda_hat){
   T_vec_dt[, .(Y_val = theta_hat * (log(T_val) - log(lambda_hat)) , delta)]
 }
