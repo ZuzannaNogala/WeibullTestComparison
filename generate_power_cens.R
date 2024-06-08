@@ -128,8 +128,8 @@ computer_values_to_powers_cens10 <- foreach(i = 1:m, .packages = c("foreach", "d
 stopImplicitCluster()
 
 
-computePower <- function(distName, StatTestName){
-  list_of_col_value <- lapply(computer_values_to_powers_cens10, function(df) df[distName]) 
+computePower <- function(list_of_vals, distName, StatTestName){
+  list_of_col_value <- lapply(list_of_vals, function(df) df[distName]) 
   
   list_of_statistic_value <- unlist(lapply(list_of_col_value, function(df) df[StatTestName, ]))
   
@@ -140,8 +140,9 @@ computePower <- function(distName, StatTestName){
 distNames <- colnames(computer_values_to_powers_cens10[[1]])
 statsNames <- rownames(computer_values_to_powers_cens10[[1]])
 
+
 powers_dt_cens10 <- sapply(distNames, function(colName) lapply(statsNames, function(rowName){
-  computePower(distName = colName, StatTestName = rowName)
+  computePower(computer_values_to_powers_cens10, distName = colName, StatTestName = rowName)
 }))
 
 rownames(powers_dt_cens10) <- statsNames
