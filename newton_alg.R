@@ -1,3 +1,5 @@
+library(data.table)
+
 # NEWTON-RAPHSON ALGORITHM
 
 first_deritative_theta_k <- function(T_k, delta_k, theta_k, lambda_k){
@@ -99,6 +101,9 @@ thetha_hat_approx <- function(n, T_vals){
 mle_theta_full_sample <- function(n, T_vals) pracma::bisect(thetha_hat_approx(n, T_vals), 0, 10)$root
 
 mle_lambda_full_sample <- function(n, T_vals, theta_hat_est) (1 / n * (sum(T_vals ^ theta_hat_est))) ^ (1 / theta_hat_est)
+
+
+# PERCENTAGE LEVEL OF CENSURING
 
 m_find <- function(x, pi){
   function(m){
