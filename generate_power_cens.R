@@ -28,7 +28,7 @@ bootstrap_sample_test_value <- function(n, X, C, theta_hat, lambda_hat){
   
   Y_bstr_v_dt <- transform_to_Y(T_bstr_v_dt, theta_hat_bstr, lambda_hat_bstr)
   
-  # diff a params! 
+  # different "a" params, for censured data better use smaller "a"
   
   list("S_n_1_1" =  S_n_1(a = 0.75, n, Y_bstr_v_dt),
        "S_n_1_2" =  S_n_1(a = 1, n, Y_bstr_v_dt),
@@ -76,7 +76,7 @@ n_cores <- detectCores()
 cluster <- makeCluster(n_cores - 1)
 registerDoParallel(cluster)
 
-computer_values_to_powers_cens10 <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
+list_of_df_amount_of_H1_wins_HR_cens10 <- foreach(i = 1:m, .packages = c("foreach", "data.table")) %dopar%{
   W_1 <- rweibull(n, 0.5, 1)
   W_2 <- rweibull(n, 1, 1)
   W_3 <- rweibull(n, 1.5, 1)
@@ -137,14 +137,14 @@ computePower <- function(list_of_vals, distName, StatTestName){
   power
 }
 
-distNames <- colnames(computer_values_to_powers_cens10[[1]])
-statsNames <- rownames(computer_values_to_powers_cens10[[1]])
+distNames <- colnames(list_of_df_amount_of_H1_wins_HR_cens10[[1]])
+statsNames <- rownames(list_of_df_amount_of_H1_wins_HR_cens10[[1]])
 
 
-powers_dt_cens10 <- sapply(distNames, function(colName) lapply(statsNames, function(rowName){
-  computePower(computer_values_to_powers_cens10, distName = colName, StatTestName = rowName)
+powers_df_cens10 <- sapply(distNames, function(colName) lapply(statsNames, function(rowName){
+  computePower(list_of_df_amount_of_H1_wins_HR_cens10, distName = colName, StatTestName = rowName)
 }))
 
-rownames(powers_dt_cens10) <- statsNames
+rownames(powers_df_cens10) <- statsNames
 
 

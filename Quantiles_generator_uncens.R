@@ -1,3 +1,5 @@
+# GENERATE QUANTITLES, CREATE QUANTILES_DF OBJECT
+
 library(data.table)
 library(foreach)
 library(doParallel)
