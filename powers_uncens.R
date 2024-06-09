@@ -100,7 +100,7 @@ colNames_vec <- colnames(list_of_df_amount_of_H1_wins[[1]])
 
 Power_df <- sapply(colNames_vec,
                    function(colName){
-                     lapply(colnames(Quantiles_DF10), 
+                     lapply(colnames(Quantiles_DF), 
                             function(rowName){
                               computePower(list_of_df_amount_of_H1_wins,
                                            distName = colName, 
