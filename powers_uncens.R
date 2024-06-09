@@ -1,8 +1,13 @@
 library(data.table)
 library(foreach)
 library(doParallel)
-library(xtable)
+#library(xtable)
 
+# DISTRIBIUTION PACKAGES
+library(RelDists)
+library(invgamma)
+library(rmutil)
+library(ggamma)
 
 sampling_uncensured <- function(X, rowNameQDF = "Uncensured_100"){
   n <- length(X)
@@ -79,7 +84,7 @@ list_of_df_amount_of_H1_wins <- foreach(i = 1:m, .packages = c("foreach", "data.
 }
 stopImplicitCluster()
 
-load("/Users/zuza/Downloads/Sample_vals_10n.rda")
+
 
 computePower <- function(list_of_vals, distName, StatTestName){
   list_of_col_value <- lapply(list_of_vals, function(df) df[distName]) 
@@ -110,3 +115,4 @@ print(xtable(Power_df, type = "latex"), file = "...")
 
 #hist(rmutil::rhjorth(10000, s = 0, m = 1, f = 1), breaks = 100)
 #hist(rweibull(10000, 2,1.4), breaks = 100)
+#load("/Users/zuza/Downloads/Sample_vals_10n.rda")
