@@ -6,6 +6,22 @@ library(foreach)
 library(doParallel)
 # library(xtable)
 
+sampling_uncensured <- function(X, rowNameQDF = "Uncensured_100"){
+  n <- length(X)
+  quantiles <- unlist(Quantiles_DF[rowNameQDF, ])
+  
+  T_v_dt <- data.table("T_val" = X, "delta" = 1)
+  
+  theta_hat <- mle_theta_full_sample(n, T_v_dt[, T_val])
+  lambda_hat <- mle_lambda_full_sample(n, T_v_dt[, T_val], theta_hat)
+  
+  Y_v_dt <- transform_to_Y(T_v_dt, theta_hat, lambda_hat)
+  
+  c(S_n_1(a = 1, n, Y_v_dt), S_n_1(a = 2, n, Y_v_dt), S_n_1(a = 5, n, Y_v_dt),
+    S_n_2(a = 1, n, Y_v_dt), S_n_2(a = 2, n, Y_v_dt), S_n_2(a = 5, n, Y_v_dt), 
+    KS_test_full(X, theta_hat, lambda_hat, n),CM_test_full(X, theta_hat, lambda_hat, n),
+    LS_test_full(X, n)) > quantiles
+}
 
 m <- 10000
 
