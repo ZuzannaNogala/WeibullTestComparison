@@ -21,7 +21,8 @@ The repository contains the following files:
 - `newton_alg.R`: Implements the Newton-Raphson algorithm to estimate
   the parameters of the Weibull distribution - $\lambda$ (scale
   parameter) and $\theta$ (shape parameter).
-- `test_form.R`: Generates the values of the aforementioned tests.
+- `test_form.R`: Generates the values of the aforementioned tests
+  without Krit test.
 - `Quantiles_generator_uncens.R`: Contains all the necessary methods to
   generate quantiles for full samples.
 - `powers_uncens.R`:Uses a `foreach` loop to generate the power of tests
