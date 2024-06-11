@@ -12,9 +12,9 @@ Weibull distribution using Stein’s method in the presence of random
 right censoring
 (2022)](https://link.springer.com/article/10.1007/s00180-021-01178-0) by
 E. Bothma, J. S. Allison and I. J. H. Visagie with previously used test
-like Kolmogorov-Smirnov, Cramér von Mises, Liao and Shimokawa. However,
-in my work, I compared these tests on a broader range of alternatives
-divided by the behavior of their hazard rate.
+like Kolmogorov-Smirnov, Cramér von Mises, Liao and Shimokawa and Krit.
+However, in my work, I compared these tests on a broader range of
+alternatives divided by the behavior of their hazard rate.
 
 The repository contains the following files:
 
@@ -32,7 +32,8 @@ The repository contains the following files:
   hazard rate.
 - `powers_cens_HR.R`: Uses the bootstrap method to compute quantiles for
   censored data (from a uniform distribution) and a `foreach` loop to
-  generate the power.
+  generate the power with alternatives divided by the type of hazard
+  rate.
 
 The goal is to understand the performance of these tests, particularly
 in terms of power, when the important factor is the type of hazard rate.
