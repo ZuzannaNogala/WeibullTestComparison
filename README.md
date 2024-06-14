@@ -6,6 +6,8 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+A Polish version of README is down bellow.
+
 \[ENG\]
 
 The repository contains R code used in my bachelor’s thesis, which
@@ -14,11 +16,11 @@ Weibull distribution using Stein’s method in the presence of random
 right censoring
 (2022)](https://link.springer.com/article/10.1007/s00180-021-01178-0) by
 E. Bothma, J. S. Allison and I. J. H. Visagie with previously used test
-like Kolmogorov-Smirnov, Cramér von Mises, [Liao and
-Shimokawa](https://www.tandfonline.com/doi/abs/10.1080/00949659908811965)
-and [Krit](http://www.numdam.org/item/JSFS_2014__155_3_135_0/). However,
-in my work, I compared these tests on a broader range of alternatives
-divided by the behavior of their hazard rate.
+like Kolmogorov-Smirnov, Cramér von Mises, [Liao and Shimokawa
+(1999)](https://www.tandfonline.com/doi/abs/10.1080/00949659908811965)
+and [Krit (2014)](http://www.numdam.org/item/JSFS_2014__155_3_135_0/).
+However, in my work, I compared these tests on a broader range of
+alternatives divided by the behavior of their hazard rate.
 
 The repository contains the following files:
 
@@ -55,9 +57,9 @@ presence of random right censoring
 (2022)](https://link.springer.com/article/10.1007/s00180-021-01178-0)
 autorstwa E. Bothma, J. S. Allison i I. J. H. Visagie z wcześniej
 stosowanymi w praktyce testami, takimi jak testy Kołmogorowa-Smirnowa,
-Craméra von Misesa, [Liao i
-Shimokawy](https://www.tandfonline.com/doi/abs/10.1080/00949659908811965)
-oraz [Krita](http://www.numdam.org/item/JSFS_2014__155_3_135_0/).
+Craméra von Misesa, [Liao i Shimokawy
+(1999)](https://www.tandfonline.com/doi/abs/10.1080/00949659908811965)
+oraz [Krita (2014)](http://www.numdam.org/item/JSFS_2014__155_3_135_0/).
 Jednakże w mojej pracy dokonałam porównania tych testów na szerszym
 zakresie alternatyw, które zostały podzielone według zachowania ich
 funkcji hazardu.
